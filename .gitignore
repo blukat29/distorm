@@ -6,3 +6,6 @@
 *.dll
 *.lib
 *.obj
+*.txt
+*.pyc
+__pycache__/
