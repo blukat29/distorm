@@ -598,7 +598,7 @@ def FormatInstruction(ii):
 		if flagsEx >= 256: # Assert the size of flagsEx is enough to holds this value.
 			raise "FlagsEx exceeded its 8 bits. Change flagsEx of _InstInfoEx to be uint16!"
 		# Concat the mnemonics and the third operand.
-		optFields = ", 0x%x, %d, %d, %d, %d" % (flagsEx, op3, op4, mnems[1], mnems[2])
+		optFields = "0x%x, %d, %d, %d, %d" % (flagsEx, op3, op4, mnems[1], mnems[2])
 
 	# Notice we filter out internal bits from flags.
 	flags = ii.flags & ((1 << InstFlag.FLAGS_EX_START_INDEX)-1)
@@ -621,7 +621,12 @@ def FormatInstruction(ii):
 
 	fields = "0x%x, %d" % (sharedInfoIndex, mnems[0])
 	# "Structure-Name" = II_Bytes-Code {Fields + Optional-Fields}.
-	return ("\t/*II%s*/{ %s%s }" % (ii.tag, fields, optFields), (ii.flags & InstFlag.EXTENDED) != 0)
+        if ii.flags & InstFlag.EXTENDED:
+            formattedII = "\t/*II%s*/{ {%s}, %s }" % (ii.tag, fields, optFields)
+        else:
+            formattedII = "\t/*II%s*/{ %s }" % (ii.tag, fields)
+        isExtended = (ii.flags & InstFlag.EXTENDED) != 0
+        return formattedII, isExtended
 
 def FilterTable(table):
 	# All tables must go to output.
