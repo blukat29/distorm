@@ -34,7 +34,9 @@
 
 // The number of the array of instructions the decoder function will use to return the disassembled instructions.
 // Play with this value for performance...
-#define MAX_INSTRUCTIONS (1000)
+#define MAX_INSTRUCTIONS (1000000)
+// Decoded instruction information.
+_DecodedInst di[MAX_INSTRUCTIONS];
 
 int main(int argc, char **argv)
 {
@@ -42,8 +44,6 @@ int main(int argc, char **argv)
 	unsigned int dver = 0;
 	// Holds the result of the decoding.
 	_DecodeResult res;
-	// Decoded instruction information.
-	_DecodedInst di[MAX_INSTRUCTIONS];
 	// next is used for instruction's offset synchronization.
 	// diCount holds the count of filled instructions' array by the decoder.
 	unsigned int diCount = 0, i, next;
