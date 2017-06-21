@@ -88,8 +88,8 @@ static _DecodeResult decode_inst(_CodeInfo* ci, _PrefixState* ps, _DInst* di)
 	const uint8_t* startCode = ci->code;
 
 	/* Holds the info about the current found instruction. */
-	const _InstInfo* ii = NULL;
-	const _InstSharedInfo* isi = NULL;
+	const __constant _InstInfo* ii = NULL;
+	const __constant _InstSharedInfo* isi = NULL;
 
 	/* Used only for special CMP instructions which have pseudo opcodes suffix. */
 	unsigned char cmpType = 0;
@@ -191,12 +191,12 @@ static _DecodeResult decode_inst(_CodeInfo* ci, _PrefixState* ps, _DInst* di)
 
 		/* Use third operand, only if the flags says this InstInfo requires it. */
 		if (instFlags & INST_USE_OP3) {
-			if (!operands_extract(ci, di, ii, instFlags, (_OpType)((_InstInfoEx*)ii)->op3, ONT_3, modrm, ps, effOpSz, effAdrSz, NULL)) goto _Undecodable;
+			if (!operands_extract(ci, di, ii, instFlags, (_OpType)((__constant _InstInfoEx*)ii)->op3, ONT_3, modrm, ps, effOpSz, effAdrSz, NULL)) goto _Undecodable;
 		} else break;
 		
 		/* Support for a fourth operand is added for (i.e:) INSERTQ instruction. */
 		if (instFlags & INST_USE_OP4) {
-			if (!operands_extract(ci, di, ii, instFlags, (_OpType)((_InstInfoEx*)ii)->op4, ONT_4, modrm, ps, effOpSz, effAdrSz, NULL)) goto _Undecodable;
+			if (!operands_extract(ci, di, ii, instFlags, (_OpType)((__constant _InstInfoEx*)ii)->op4, ONT_4, modrm, ps, effOpSz, effAdrSz, NULL)) goto _Undecodable;
 		}
 		break;
 	} /* Continue here after all operands were extracted. */
@@ -253,9 +253,9 @@ static _DecodeResult decode_inst(_CodeInfo* ci, _PrefixState* ps, _DInst* di)
 	if ((instFlags & (INST_PRE_ADDR_SIZE | INST_USE_EXMNEMONIC)) == (INST_PRE_ADDR_SIZE | INST_USE_EXMNEMONIC)) {
 		ps->usedPrefixes |= INST_PRE_ADDR_SIZE;
 		if (effAdrSz == Decode16Bits) di->opcode = ii->opcodeId;
-		else if (effAdrSz == Decode32Bits) di->opcode = ((_InstInfoEx*)ii)->opcodeId2;
+		else if (effAdrSz == Decode32Bits) di->opcode = ((__constant _InstInfoEx*)ii)->opcodeId2;
 		/* Ignore REX.W in 64bits, JECXZ is promoted. */
-		else /* Decode64Bits */ di->opcode = ((_InstInfoEx*)ii)->opcodeId3;
+		else /* Decode64Bits */ di->opcode = ((__constant _InstInfoEx*)ii)->opcodeId3;
 	}
 
 	/* LOOPxx instructions are also native instruction, but they are special case ones, ADDR_SIZE prefix affects them. */
@@ -293,8 +293,8 @@ static _DecodeResult decode_inst(_CodeInfo* ci, _PrefixState* ps, _DInst* di)
 			/* Is it a special instruction which has another mnemonic for mod=11 ? */
 			if (instFlags & INST_MNEMONIC_MODRM_BASED) {
 				if (modrm >= INST_DIVIDED_MODRM) di->opcode = ii->opcodeId;
-				else di->opcode = ((_InstInfoEx*)ii)->opcodeId2;
-			} else di->opcode = ((_InstInfoEx*)ii)->opcodeId2;
+				else di->opcode = ((__constant _InstInfoEx*)ii)->opcodeId2;
+			} else di->opcode = ((__constant _InstInfoEx*)ii)->opcodeId2;
 		} else di->opcode = ii->opcodeId;
 	} else { /* Decode64Bits, note that some instructions might be decoded in Decode32Bits above. */
 
@@ -312,8 +312,8 @@ static _DecodeResult decode_inst(_CodeInfo* ci, _PrefixState* ps, _DInst* di)
 			/* Use third mnemonic, for 64 bits. */
 			if ((instFlags & INST_USE_EXMNEMONIC2) && (vrex & PREFIX_EX_W)) {
 				ps->usedPrefixes |= INST_PRE_REX;
-				di->opcode = ((_InstInfoEx*)ii)->opcodeId3;
-			} else di->opcode = ((_InstInfoEx*)ii)->opcodeId2; /* Use second mnemonic. */
+				di->opcode = ((__constant _InstInfoEx*)ii)->opcodeId3;
+			} else di->opcode = ((__constant _InstInfoEx*)ii)->opcodeId2; /* Use second mnemonic. */
 		} else di->opcode = ii->opcodeId;
 	}
 
@@ -322,9 +322,9 @@ static _DecodeResult decode_inst(_CodeInfo* ci, _PrefixState* ps, _DInst* di)
 
 	/* Check VEX mnemonics: */
 	if ((instFlags & INST_PRE_VEX) &&
-		(((((_InstInfoEx*)ii)->flagsEx & INST_MNEMONIC_VEXW_BASED) && (vrex & PREFIX_EX_W)) ||
-		 ((((_InstInfoEx*)ii)->flagsEx & INST_MNEMONIC_VEXL_BASED) && (vrex & PREFIX_EX_L)))) {
-		di->opcode = ((_InstInfoEx*)ii)->opcodeId2;
+		(((((__constant _InstInfoEx*)ii)->flagsEx & INST_MNEMONIC_VEXW_BASED) && (vrex & PREFIX_EX_W)) ||
+		 ((((__constant _InstInfoEx*)ii)->flagsEx & INST_MNEMONIC_VEXL_BASED) && (vrex & PREFIX_EX_L)))) {
+		di->opcode = ((__constant _InstInfoEx*)ii)->opcodeId2;
 	}
 
 	/* Or is it a special CMP instruction which needs a pseudo opcode suffix ? */
