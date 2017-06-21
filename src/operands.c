@@ -17,7 +17,7 @@ This library is licensed under the BSD license. See the file COPYING.
 
 
 /* Maps a register to its register-class mask. */
-uint32_t _REGISTERTORCLASS[] = /* Based on _RegisterType enumeration! */
+const __constant uint32_t _REGISTERTORCLASS[] = /* Based on _RegisterType enumeration! */
 {RM_AX, RM_CX, RM_DX, RM_BX, RM_SP, RM_BP, RM_SI, RM_DI, RM_R8, RM_R9, RM_R10, RM_R11, RM_R12, RM_R13, RM_R14, RM_R15,
  RM_AX, RM_CX, RM_DX, RM_BX, RM_SP, RM_BP, RM_SI, RM_DI, RM_R8, RM_R9, RM_R10, RM_R11, RM_R12, RM_R13, RM_R14, RM_R15,
  RM_AX, RM_CX, RM_DX, RM_BX, RM_SP, RM_BP, RM_SI, RM_DI, RM_R8, RM_R9, RM_R10, RM_R11, RM_R12, RM_R13, RM_R14, RM_R15,
@@ -34,7 +34,7 @@ uint32_t _REGISTERTORCLASS[] = /* Based on _RegisterType enumeration! */
 };
 
 typedef enum {OPERAND_SIZE_NONE = 0, OPERAND_SIZE8, OPERAND_SIZE16, OPERAND_SIZE32, OPERAND_SIZE64, OPERAND_SIZE80, OPERAND_SIZE128, OPERAND_SIZE256} _OperandSizeType;
-static uint16_t _OPSIZETOINT[] = {0, 8, 16, 32, 64, 80, 128, 256};
+static const __constant uint16_t _OPSIZETOINT[] = {0, 8, 16, 32, 64, 80, 128, 256};
 
 /* A helper function to fix the 8 bits register if REX is used (to support SIL, DIL, etc). */
 static unsigned int _FASTCALL_ operands_fix_8bit_rex_base(unsigned int reg)
@@ -179,6 +179,8 @@ static void operands_extract_sib(_DInst* di, _OperandNumberType opNum,
 	}
 }
 
+static const __constant uint8_t MODS[] = {R_BX, R_BX, R_BP, R_BP, R_SI, R_DI, R_BP, R_BX};
+static const __constant uint8_t MODS2[] = {R_SI, R_DI, R_SI, R_DI};
 /*
  * This seems to be the hardest part in decoding the operands.
  * If you take a look carefully at Table 2-2. 32-Bit Addressing Forms with the ModR/M Byte,
@@ -391,8 +393,6 @@ static int operands_extract_modrm(_CodeInfo* ci,
 			 * Create the O_MEM for 16 bits indirection that requires 2 registers, E.G: [BS+SI].
 			 * or create O_SMEM for a single register indirection, E.G: [BP].
 			 */
-			static uint8_t MODS[] = {R_BX, R_BX, R_BP, R_BP, R_SI, R_DI, R_BP, R_BX};
-			static uint8_t MODS2[] = {R_SI, R_DI, R_SI, R_DI};
 			if (rm < 4) {
 				op->type = O_MEM;
 				di->base = MODS[rm];
@@ -488,7 +488,7 @@ static int operands_extract_modrm(_CodeInfo* ci,
  * FALSE - not enough bytes, or invalid operands.
  */
 
-int operands_extract(_CodeInfo* ci, _DInst* di, const _InstInfo* ii,
+int operands_extract(_CodeInfo* ci, _DInst* di, const __constant _InstInfo* ii,
                      _iflags instFlags, _OpType type, _OperandNumberType opNum,
                      unsigned int modrm, _PrefixState* ps, _DecodeType effOpSz,
                      _DecodeType effAdrSz, int* lockableInstruction)
