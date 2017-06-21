@@ -7,6 +7,13 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 re_hex = '[0-9a-fA-F]+'
 re_distorm = re.compile('('+re_hex+')' + ' \((\d+)\) ' + re_hex + '\s+(\w+) ?.*')
 
+def do_run(cmd):
+    try:
+        return subprocess.check_output(cmd)
+    except subprocess.CalledProcessError as e:
+        print ' '.join(cmd)
+        raise e
+
 def run_distorm(target, bits=64, offset=0x400000):
     cmd = (os.path.join(SCRIPT_DIR, 'disasm'),)
     if bits == 64:
@@ -16,7 +23,7 @@ def run_distorm(target, bits=64, offset=0x400000):
     cmd += (target,)
     if offset:
         cmd += (hex(offset),)
-    out = subprocess.check_output(cmd)
+    out = do_run(cmd)
     return out
 
 def run_objdump(target, bits=64, offset=0x400000):
@@ -30,7 +37,7 @@ def run_objdump(target, bits=64, offset=0x400000):
     if offset:
         cmd += ('--adjust-vma=' + hex(offset),)
     cmd += (target,)
-    out = subprocess.check_output(cmd)
+    out = do_run(cmd)
     return out
 
 def parse_distorm(out):
