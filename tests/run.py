@@ -64,7 +64,8 @@ def parse_distorm(out):
                 if opcode == lhs:
                     opcode = rhs
                     break
-            res += '%016x %02d %s\n' % (offset, size, opcode)
+            #res += '%016x %02d %s\n' % (offset, size, opcode)
+            res += '%016x %02d\n' % (offset, size)
     return res
 
 def parse_objdump(out):
@@ -90,7 +91,8 @@ def parse_objdump(out):
     res = ''
     for inst in insts:
         offset, size, opcode = inst
-        res += '%016x %02d %s\n' % (offset, size, opcode)
+        #res += '%016x %02d %s\n' % (offset, size, opcode)
+        res += '%016x %02d\n' % (offset, size)
     return res
 
 def check(target):
