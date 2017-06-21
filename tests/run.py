@@ -6,6 +6,14 @@ import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 re_hex = '[0-9a-fA-F]+'
 re_distorm = re.compile('('+re_hex+')' + ' \((\d+)\) ' + re_hex + '\s+(\w+) ?.*')
+opcode_alias = (
+    ('jz', 'je'),
+    ('jnz', 'jne'),
+    ('setz', 'sete'),
+    ('setnz', 'setne'),
+    ('cmovz', 'cmove'),
+    ('cmovnz', 'cmovne'),
+)
 
 def do_run(cmd):
     try:
@@ -50,8 +58,12 @@ def parse_distorm(out):
         m = re_distorm.match(line)
         if m:
             offset = int(m.group(1), 16)
-            size = int(m.group(2), 16)
+            size = int(m.group(2))
             opcode = m.group(3).lower()
+            for lhs, rhs in opcode_alias:
+                if opcode == lhs:
+                    opcode = rhs
+                    break
             res += '%016x %02d %s\n' % (offset, size, opcode)
     return res
 
