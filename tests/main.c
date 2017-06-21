@@ -4,12 +4,13 @@
 // Mikhail, 2006
 // JvW, 2007
 
+#include <errno.h>
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
-#include <errno.h>
 #include <sys/stat.h>
+#include <time.h>
 
 // For the compilers who don't have sysexits.h, which is not an ISO/ANSI include!
 #define EX_OK           0
@@ -137,8 +138,8 @@ int main(int argc, char **argv)
 
 	printf("bits: %d\nfilename: %s\norigin: ", dt == Decode16Bits ? 16 : dt == Decode32Bits ? 32 : 64, argv[param]);
 #ifdef SUPPORT_64BIT_OFFSET
-	if (dt != Decode64Bits) printf("%08llx\n", offset);
-	else printf("%016llx\n", offset);
+	if (dt != Decode64Bits) printf("%08"PRIx64"\n", offset);
+	else printf("%016"PRIx64"\n", offset);
 #else
 	printf("%08x\n", offset);
 #endif
@@ -157,7 +158,7 @@ int main(int argc, char **argv)
 
 		for (i = 0; i < decodedInstructionsCount; i++)
 #ifdef SUPPORT_64BIT_OFFSET
-			printf("%0*llx (%02d) %-24s %s%s%s\r\n", dt != Decode64Bits ? 8 : 16, decodedInstructions[i].offset, decodedInstructions[i].size, (char*)decodedInstructions[i].instructionHex.p, (char*)decodedInstructions[i].mnemonic.p, decodedInstructions[i].operands.length != 0 ? " " : "", (char*)decodedInstructions[i].operands.p);
+			printf("%0*"PRIx64" (%02d) %-24s %s%s%s\r\n", dt != Decode64Bits ? 8 : 16, decodedInstructions[i].offset, decodedInstructions[i].size, (char*)decodedInstructions[i].instructionHex.p, (char*)decodedInstructions[i].mnemonic.p, decodedInstructions[i].operands.length != 0 ? " " : "", (char*)decodedInstructions[i].operands.p);
 #else
 			printf("%08x (%02d) %-24s %s%s%s\r\n", decodedInstructions[i].offset, decodedInstructions[i].size, (char*)decodedInstructions[i].instructionHex.p, (char*)decodedInstructions[i].mnemonic.p, decodedInstructions[i].operands.length != 0 ? " " : "", (char*)decodedInstructions[i].operands.p);
 #endif
