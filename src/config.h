@@ -15,7 +15,27 @@ This library is licensed under the BSD license. See the file COPYING.
 /* diStorm version number. */
 #define __DISTORMV__ 0x030304
 
-#include <string.h> /* memset, memcpy - can be easily self implemented for libc independency. */
+inline static void* memset(void* s, int c, size_t n)
+{
+    unsigned char* p = (unsigned char*)s;
+    while (--n) {
+        *p = (unsigned char)c;
+        p++;
+    }
+    return s;
+}
+
+inline static void* memcpy(void* dst, const void* src, size_t n)
+{
+    unsigned char* p = dst;
+    const unsigned char* q = src;
+    while (--n) {
+        *p = *q;
+        p++;
+        q++;
+    }
+    return dst;
+}
 
 #include "../include/distorm.h"
 
