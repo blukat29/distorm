@@ -21,32 +21,30 @@ This library is licensed under the BSD license. See the file COPYING.
 
 /* Instruction Prefixes - Opcode - ModR/M - SIB - Displacement - Immediate */
 
+/*
+ * This table is to map from the current decoding mode to an effective address size:
+ * Decode16 -> Decode32
+ * Decode32 -> Decode16
+ * Decode64 -> Decode32
+ */
+static __constant _DecodeType AddrSizeTable[] = {Decode32Bits, Decode16Bits, Decode32Bits};
 static _DecodeType decode_get_effective_addr_size(_DecodeType dt, _iflags decodedPrefixes)
 {
-	/*
-	 * This table is to map from the current decoding mode to an effective address size:
-	 * Decode16 -> Decode32
-	 * Decode32 -> Decode16
-	 * Decode64 -> Decode32
-	 */
-	static _DecodeType AddrSizeTable[] = {Decode32Bits, Decode16Bits, Decode32Bits};
-
 	/* Switch to non default mode if prefix exists, only for ADDRESS SIZE. */
 	if (decodedPrefixes & INST_PRE_ADDR_SIZE) dt = AddrSizeTable[dt];
 	return dt;
 }
 
+/*
+ * This table is to map from the current decoding mode to an effective operand size:
+ * Decode16 -> Decode32
+ * Decode32 -> Decode16
+ * Decode64 -> Decode16
+ * Not that in 64bits it's a bit more complicated, because of REX and promoted instructions.
+ */
+static __constant _DecodeType OpSizeTable[] = {Decode32Bits, Decode16Bits, Decode16Bits};
 static _DecodeType decode_get_effective_op_size(_DecodeType dt, _iflags decodedPrefixes, unsigned int rex, _iflags instFlags)
 {
-	/*
-	 * This table is to map from the current decoding mode to an effective operand size:
-	 * Decode16 -> Decode32
-	 * Decode32 -> Decode16
-	 * Decode64 -> Decode16
-	 * Not that in 64bits it's a bit more complicated, because of REX and promoted instructions.
-	 */
-	static _DecodeType OpSizeTable[] = {Decode32Bits, Decode16Bits, Decode16Bits};
-
 	if (decodedPrefixes & INST_PRE_OP_SIZE) return OpSizeTable[dt];
 
 	if (dt == Decode64Bits) {
