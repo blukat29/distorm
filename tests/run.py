@@ -17,7 +17,12 @@ opcode_alias = (
 
 def do_run(cmd):
     try:
-        return subprocess.check_output(cmd)
+        ld_library_path = os.path.join(SCRIPT_DIR, '../make/linux')
+        ld_library_path += ':' + os.path.join(SCRIPT_DIR, '../make/mac')
+        ld_library_path += ':' + os.environ.get('LD_LIBRARY_PATH')
+        env = os.environ
+        env['LD_LIBRARY_PATH'] = ld_library_path
+        return subprocess.check_output(cmd, env=env)
     except subprocess.CalledProcessError as e:
         print ' '.join(cmd)
         raise e
