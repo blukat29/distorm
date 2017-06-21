@@ -15,6 +15,7 @@ This library is licensed under the BSD license. See the file COPYING.
 #define DISTORM_H
 
 #include "cl_defs.h"
+#define DISTORM_LIGHT
 
 /*
  * 64 bit offsets support:
