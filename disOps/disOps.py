@@ -640,11 +640,11 @@ def GeneratePseudoMnemonicOffsets():
 	"""
 	# Lengths of pesudo mnemonics (SSE=CMPxxxYY + null + lengthByte)
 	lengths = map(lambda x: 3 + len(x) + 2 + 2, SSECmpTypes)
-	s = "uint16_t CmpMnemonicOffsets[8] = {\n\t" + ", ".join([str(sum(lengths[:i] or [0])) for i in xrange(len(lengths))]) + "\n};\n";
+	s = "const uint16_t CmpMnemonicOffsets[8] = {\n\t" + ", ".join([str(sum(lengths[:i] or [0])) for i in xrange(len(lengths))]) + "\n};\n";
 
 	# (AVX=VCMPxxxYY + null + lengthByte).
 	lengths = map(lambda x: 4 + len(x) + 2 + 2, AVXCmpTypes)
-	s += "uint16_t VCmpMnemonicOffsets[32] = {\n\t" + ", ".join([str(sum(lengths[:i] or [0])) for i in xrange(len(lengths))]) + "\n};";
+	s += "const uint16_t VCmpMnemonicOffsets[32] = {\n\t" + ", ".join([str(sum(lengths[:i] or [0])) for i in xrange(len(lengths))]) + "\n};";
 	return s
 
 def CreateTables(db):
@@ -767,14 +767,14 @@ def CreateTables(db):
 			else:
 				# False indicates this entry points nothing.
 				InstructionsTree.append((0, ""))
-	s = ["\n".join(["_InstInfo II_%s =%s;" % (i.mnemonics[0] if i.mnemonics[0][0] != '_' else i.mnemonics[0][1:], FormatInstruction(i)[0]) for i in db.getExportedInstructions()]),
-		"_iflags FlagsTable[%d] = {\n%s\n};" % (len(flagsDict), ",\n".join(["\t0x%x" % i[1] for i in sorted(zip(flagsDict.values(), flagsDict.keys()))])),
-		"\n".join(["_InstNode Table%s = %d;" % (i[0], i[1]) for i in externTables]),
-		"_InstInfo InstInfos[%d] = {\n%s\n};" % (len(InstInfos), ",\n".join(InstInfos)),
-		"_InstInfoEx InstInfosEx[%d] = {\n%s\n};" % (len(InstInfosEx), ",\n".join(InstInfosEx)),
-		"_InstNode InstructionsTree[%d] = {\n%s\n};" % (len(InstructionsTree), ",\n".join(["\t/* %x - %s */  %s" % (i[0], i[1][1], "0" if i[1][0] == 0 else "0x%x" % i[1][0]) for i in enumerate(InstructionsTree)])),
+	s = ["\n".join(["const _InstInfo II_%s =%s;" % (i.mnemonics[0] if i.mnemonics[0][0] != '_' else i.mnemonics[0][1:], FormatInstruction(i)[0]) for i in db.getExportedInstructions()]),
+		"const _iflags FlagsTable[%d] = {\n%s\n};" % (len(flagsDict), ",\n".join(["\t0x%x" % i[1] for i in sorted(zip(flagsDict.values(), flagsDict.keys()))])),
+		"\n".join(["const _InstNode Table%s = %d;" % (i[0], i[1]) for i in externTables]),
+		"const _InstInfo InstInfos[%d] = {\n%s\n};" % (len(InstInfos), ",\n".join(InstInfos)),
+		"const _InstInfoEx InstInfosEx[%d] = {\n%s\n};" % (len(InstInfosEx), ",\n".join(InstInfosEx)),
+		"const _InstNode InstructionsTree[%d] = {\n%s\n};" % (len(InstructionsTree), ",\n".join(["\t/* %x - %s */  %s" % (i[0], i[1][1], "0" if i[1][0] == 0 else "0x%x" % i[1][0]) for i in enumerate(InstructionsTree)])),
 		# sharedInfoDict must be evaluated last, since the exported instructions above add items to it!
-		"_InstSharedInfo InstSharedInfoTable[%d] = {\n%s\n};" % (len(sharedInfoDict), ",\n".join(["\t{ %s }" % str(i[1])[1:-1] for i in sorted(zip(sharedInfoDict.values(), sharedInfoDict.keys()))])),
+		"const _InstSharedInfo InstSharedInfoTable[%d] = {\n%s\n};" % (len(sharedInfoDict), ",\n".join(["\t{ %s }" % str(i[1])[1:-1] for i in sorted(zip(sharedInfoDict.values(), sharedInfoDict.keys()))])),
 		GeneratePseudoMnemonicOffsets()]
 	return "\n\n".join(s)
 
