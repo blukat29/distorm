@@ -73,7 +73,7 @@ inline static void* memcpy(void* dst, const void* src, size_t n)
 /* These macros are used in order to make the code portable. */
 #ifdef __GNUC__
 
-#include <stdint.h>
+#include "../include/cl_defs.h"
 
 #define _DLLEXPORT_
 #define _FASTCALL_

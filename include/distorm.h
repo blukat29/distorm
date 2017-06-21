@@ -14,6 +14,8 @@ This library is licensed under the BSD license. See the file COPYING.
 #ifndef DISTORM_H
 #define DISTORM_H
 
+#include "cl_defs.h"
+
 /*
  * 64 bit offsets support:
  * If the diStorm library you use was compiled with 64 bits offsets,
@@ -38,7 +40,6 @@ This library is licensed under the BSD license. See the file COPYING.
 	#ifdef _MSC_VER
 		#define OFFSET_INTEGER unsigned __int64
 	#else
-		#include <stdint.h>
 		#define OFFSET_INTEGER uint64_t
 	#endif
 #else
