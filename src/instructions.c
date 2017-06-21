@@ -86,7 +86,7 @@ for non-used defined instructions, but I think that it still rocks.
  * Note that it takes care about basic inst-info or inst-info-ex.
  * The caller should worry about boundary checks and whether it accesses a last-level table.
  */
-static const _InstInfo* inst_get_info(_InstNode in, int index)
+static const __constant _InstInfo* inst_get_info(_InstNode in, int index)
 {
 	int instIndex = 0;
 
@@ -129,11 +129,11 @@ static const _InstInfo* inst_get_info(_InstNode in, int index)
  * Although this instruction doesn't require a REX.W, it just shows, that even if it did - it doesn't matter.
  * REX.W is dropped because it's not required, but the decode function disabled the operand size even so.
  */
-static const _InstInfo* inst_lookup_prefixed(_InstNode in, _PrefixState* ps)
+static const __constant _InstInfo* inst_lookup_prefixed(_InstNode in, _PrefixState* ps)
 {
 	int checkOpSize = FALSE;
 	int index = 0;
-	const _InstInfo* ii = NULL;
+	const __constant _InstInfo* ii = NULL;
 
 	/* Check prefixes of current decoded instruction (None, 0x66, 0xf3, 0xf2). */
 	switch (ps->decodedPrefixes & (INST_PRE_OP_SIZE | INST_PRE_REPS))
@@ -204,7 +204,8 @@ static const _InstInfo* inst_lookup_prefixed(_InstNode in, _PrefixState* ps)
  * (which means that the base instruction hints about the other instruction).
  * Note that caller should check if it's a MOD dependent instruction before getting in here.
  */
-static const _InstInfo* inst_vex_mod_lookup(_CodeInfo* ci, _InstNode in, const _InstInfo* ii, unsigned int index)
+static const __constant _InstInfo* inst_vex_mod_lookup(_CodeInfo* ci, _InstNode in,
+        const __constant _InstInfo* ii, unsigned int index)
 {
 	/* Advance to read the MOD from ModRM byte. */
 	ci->code += 1;
@@ -220,7 +221,7 @@ static const _InstInfo* inst_vex_mod_lookup(_CodeInfo* ci, _InstNode in, const _
 	return ii;
 }
 
-static const _InstInfo* inst_vex_lookup(_CodeInfo* ci, _PrefixState* ps)
+static const __constant _InstInfo* inst_vex_lookup(_CodeInfo* ci, _PrefixState* ps)
 {
 	_InstNode in = 0;
 	unsigned int pp = 0, start = 0;
@@ -274,7 +275,7 @@ static const _InstInfo* inst_vex_lookup(_CodeInfo* ci, _PrefixState* ps)
 	 * it might return NULL, if the index is invalid.
 	 */
 	if (instType == INT_LIST_PREFIXED) {
-		const _InstInfo* ii = inst_get_info(in, index);
+		const __constant _InstInfo* ii = inst_get_info(in, index);
 		/* See if the instruction is dependent on MOD. */
 		if ((ii != NULL) && (((_InstInfoEx*)ii)->flagsEx & INST_MODRR_BASED)) {
 			ii = inst_vex_mod_lookup(ci, in, ii, index);
@@ -304,7 +305,7 @@ static const _InstInfo* inst_vex_lookup(_CodeInfo* ci, _PrefixState* ps)
 
 	/* Now that we got to the last table in the trie, check for a prefixed table. */
 	if (INST_NODE_TYPE(in) == INT_LIST_PREFIXED) {
-		const _InstInfo* ii = inst_get_info(in, index);
+		const __constant _InstInfo* ii = inst_get_info(in, index);
 		/* See if the instruction is dependent on MOD. */
 		if ((ii != NULL) && (((_InstInfoEx*)ii)->flagsEx & INST_MODRR_BASED)) {
 			ii = inst_vex_mod_lookup(ci, in, ii, index);
@@ -316,12 +317,12 @@ static const _InstInfo* inst_vex_lookup(_CodeInfo* ci, _PrefixState* ps)
 	return NULL;
 }
 
-const _InstInfo* inst_lookup(_CodeInfo* ci, _PrefixState* ps)
+const __constant _InstInfo* inst_lookup(_CodeInfo* ci, _PrefixState* ps)
 {
 	unsigned int tmpIndex0 = 0, tmpIndex1 = 0, tmpIndex2 = 0, rex = ps->vrex;
 	int instType = 0;
 	_InstNode in = 0;
-	const _InstInfo* ii = NULL;
+	const __constant _InstInfo* ii = NULL;
 	int isWaitIncluded = FALSE;
 
 	/* See whether we have to handle a VEX prefixed instruction. */
@@ -579,7 +580,7 @@ const _InstInfo* inst_lookup(_CodeInfo* ci, _PrefixState* ps)
 *
 * The id of this opcode should not be used, the following function should change it anyway.
 */
-const _InstInfo* inst_lookup_3dnow(_CodeInfo* ci)
+const __constant _InstInfo* inst_lookup_3dnow(_CodeInfo* ci)
 {
 	/* Start off from the two escape bytes gates... which is 3DNow! table.*/
 	_InstNode in = Table_0F_0F;
