@@ -457,7 +457,7 @@ typedef enum {
 /* Instruction node is treated as { int index:13;  int type:3; } */
 typedef uint16_t _InstNode;
 
-_InstInfo* inst_lookup(_CodeInfo* ci, _PrefixState* ps);
-_InstInfo* inst_lookup_3dnow(_CodeInfo* ci);
+const _InstInfo* inst_lookup(_CodeInfo* ci, _PrefixState* ps);
+const _InstInfo* inst_lookup_3dnow(_CodeInfo* ci);
 
 #endif /* INSTRUCTIONS_H */

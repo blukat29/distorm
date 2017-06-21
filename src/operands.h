@@ -20,7 +20,7 @@ This library is licensed under the BSD license. See the file COPYING.
 
 extern uint32_t _REGISTERTORCLASS[];
 
-int operands_extract(_CodeInfo* ci, _DInst* di, _InstInfo* ii,
+int operands_extract(_CodeInfo* ci, _DInst* di, const _InstInfo* ii,
                      _iflags instFlags, _OpType type, _OperandNumberType opNum,
                      unsigned int modrm, _PrefixState* ps, _DecodeType effOpSz,
                      _DecodeType effAdrSz, int* lockableInstruction);

@@ -90,8 +90,8 @@ static _DecodeResult decode_inst(_CodeInfo* ci, _PrefixState* ps, _DInst* di)
 	const uint8_t* startCode = ci->code;
 
 	/* Holds the info about the current found instruction. */
-	_InstInfo* ii = NULL;
-	_InstSharedInfo* isi = NULL;
+	const _InstInfo* ii = NULL;
+	const _InstSharedInfo* isi = NULL;
 
 	/* Used only for special CMP instructions which have pseudo opcodes suffix. */
 	unsigned char cmpType = 0;
@@ -113,8 +113,8 @@ static _DecodeResult decode_inst(_CodeInfo* ci, _PrefixState* ps, _DInst* di)
 	instFlags = FlagsTable[isi->flagsIndex];
 
 	/* Copy the privileged bit and remove it from the opcodeId field ASAP. */
-	privilegedFlag = ii->opcodeId & OPCODE_ID_PRIVILEGED;
-	ii->opcodeId &= ~OPCODE_ID_PRIVILEGED;
+//	privilegedFlag = ii->opcodeId & OPCODE_ID_PRIVILEGED;
+//	ii->opcodeId &= ~OPCODE_ID_PRIVILEGED;
 
 	/*
 	 * If both REX and OpSize are available we will have to disable the OpSize, because REX has precedence.

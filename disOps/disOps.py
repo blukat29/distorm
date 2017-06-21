@@ -579,7 +579,8 @@ def FormatInstruction(ii):
 	mnems = TranslateMnemonics([None, ii.classType][(ii.flags & InstFlag.PSEUDO_OPCODE) == InstFlag.PSEUDO_OPCODE], ii.mnemonics) + [0, 0]
 
 	# Mark whether the instruction is privileged, by setting MSB of the OpcodeId field.
-	UpdatePrivilegedInstruction(mnems, ii)
+        # Dont do it, since it nukes the trie index.
+	# UpdatePrivilegedInstruction(mnems, ii)
 
 	# Pad operands to atleast three (so we don't get an exception too, since there might be instructions with no operands at all).
 	ops = ii.operands + [OperandType.NONE, OperandType.NONE, OperandType.NONE, OperandType.NONE]

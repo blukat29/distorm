@@ -488,7 +488,7 @@ static int operands_extract_modrm(_CodeInfo* ci,
  * FALSE - not enough bytes, or invalid operands.
  */
 
-int operands_extract(_CodeInfo* ci, _DInst* di, _InstInfo* ii,
+int operands_extract(_CodeInfo* ci, _DInst* di, const _InstInfo* ii,
                      _iflags instFlags, _OpType type, _OperandNumberType opNum,
                      unsigned int modrm, _PrefixState* ps, _DecodeType effOpSz,
                      _DecodeType effAdrSz, int* lockableInstruction)
