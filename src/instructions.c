@@ -94,7 +94,7 @@ static const __constant _InstInfo* inst_get_info(_InstNode in, int index)
 	if (in == INT_NOTEXISTS) return NULL;
 
 	instIndex = INST_NODE_INDEX(in);
-	return INST_NODE_TYPE(in) == INT_INFO ? &InstInfos[instIndex] : (_InstInfo*)&InstInfosEx[instIndex];
+	return INST_NODE_TYPE(in) == INT_INFO ? &InstInfos[instIndex] : (const __constant _InstInfo*)&InstInfosEx[instIndex];
 }
 
 /*
@@ -277,7 +277,7 @@ static const __constant _InstInfo* inst_vex_lookup(_CodeInfo* ci, _PrefixState* 
 	if (instType == INT_LIST_PREFIXED) {
 		const __constant _InstInfo* ii = inst_get_info(in, index);
 		/* See if the instruction is dependent on MOD. */
-		if ((ii != NULL) && (((_InstInfoEx*)ii)->flagsEx & INST_MODRR_BASED)) {
+		if ((ii != NULL) && (((const __constant _InstInfoEx*)ii)->flagsEx & INST_MODRR_BASED)) {
 			ii = inst_vex_mod_lookup(ci, in, ii, index);
 		}
 		return ii;
@@ -307,7 +307,7 @@ static const __constant _InstInfo* inst_vex_lookup(_CodeInfo* ci, _PrefixState* 
 	if (INST_NODE_TYPE(in) == INT_LIST_PREFIXED) {
 		const __constant _InstInfo* ii = inst_get_info(in, index);
 		/* See if the instruction is dependent on MOD. */
-		if ((ii != NULL) && (((_InstInfoEx*)ii)->flagsEx & INST_MODRR_BASED)) {
+		if ((ii != NULL) && (((const __constant _InstInfoEx*)ii)->flagsEx & INST_MODRR_BASED)) {
 			ii = inst_vex_mod_lookup(ci, in, ii, index);
 		}
 		return ii;
@@ -330,9 +330,9 @@ const __constant _InstInfo* inst_lookup(_CodeInfo* ci, _PrefixState* ps)
 		ii = inst_vex_lookup(ci, ps);
 		if (ii != NULL) {
 			/* Make sure that VEX.L exists when forced. */
-			if ((((_InstInfoEx*)ii)->flagsEx & INST_FORCE_VEXL) && (~ps->vrex & PREFIX_EX_L)) return NULL;
+			if ((((const __constant _InstInfoEx*)ii)->flagsEx & INST_FORCE_VEXL) && (~ps->vrex & PREFIX_EX_L)) return NULL;
 			/* If the instruction doesn't use VEX.vvvv it must be zero. */
-			if ((((_InstInfoEx*)ii)->flagsEx & INST_VEX_V_UNUSED) && ps->vexV) return NULL;
+			if ((((const __constant _InstInfoEx*)ii)->flagsEx & INST_VEX_V_UNUSED) && ps->vexV) return NULL;
 		}
 		return ii;
 	}
@@ -409,7 +409,7 @@ const __constant _InstInfo* inst_lookup(_CodeInfo* ci, _PrefixState* ps)
 		}
 
 		/* Return the 1 byte instruction we found. */
-		return instType == INT_INFO ? &InstInfos[INST_NODE_INDEX(in)] : (_InstInfo*)&InstInfosEx[INST_NODE_INDEX(in)];
+		return instType == INT_INFO ? &InstInfos[INST_NODE_INDEX(in)] : (const __constant _InstInfo*)&InstInfosEx[INST_NODE_INDEX(in)];
 	}
 
 	/* Read second byte, still doesn't mean all of its bits are used (I.E: ModRM). */
@@ -434,7 +434,7 @@ const __constant _InstInfo* inst_lookup(_CodeInfo* ci, _PrefixState* ps)
 			instType = INST_NODE_TYPE(in2);
 
 			if (instType == INT_INFO) ii = &InstInfos[INST_NODE_INDEX(in2)];
-			else if (instType == INT_INFOEX) ii = (_InstInfo*)&InstInfosEx[INST_NODE_INDEX(in2)];
+			else if (instType == INT_INFOEX) ii = (const __constant _InstInfo*)&InstInfosEx[INST_NODE_INDEX(in2)];
 			if ((ii != NULL) && (INST_INFO_FLAGS(ii) & INST_NOT_DIVIDED)) return ii;
 			/* ii is reset below. */
 		}
@@ -459,7 +459,7 @@ const __constant _InstInfo* inst_lookup(_CodeInfo* ci, _PrefixState* ps)
 
 		if (instType < INT_INFOS) {
 			/* If the instruction doesn't support the wait (marked as opsize) as part of the opcode, it's illegal. */
-			ii = instType == INT_INFO ? &InstInfos[INST_NODE_INDEX(in)] : (_InstInfo*)&InstInfosEx[INST_NODE_INDEX(in)];
+			ii = instType == INT_INFO ? &InstInfos[INST_NODE_INDEX(in)] : (const __constant _InstInfo*)&InstInfosEx[INST_NODE_INDEX(in)];
 			if ((~INST_INFO_FLAGS(ii) & INST_PRE_OP_SIZE) && (isWaitIncluded)) return NULL;
 			return ii;
 		}
@@ -486,7 +486,7 @@ const __constant _InstInfo* inst_lookup(_CodeInfo* ci, _PrefixState* ps)
 
 		/* 2 bytes instruction (OCST_2BYTES). */
 		if (instType < INT_INFOS)
-			return instType == INT_INFO ? &InstInfos[INST_NODE_INDEX(in)] : (_InstInfo*)&InstInfosEx[INST_NODE_INDEX(in)];
+			return instType == INT_INFO ? &InstInfos[INST_NODE_INDEX(in)] : (const __constant _InstInfo*)&InstInfosEx[INST_NODE_INDEX(in)];
 
 		/*
 		 * 2 bytes + mandatory prefix.
@@ -509,7 +509,7 @@ const __constant _InstInfo* inst_lookup(_CodeInfo* ci, _PrefixState* ps)
 		instType = INST_NODE_TYPE(in);
 
 		if (instType < INT_INFOS)
-			return instType == INT_INFO ? &InstInfos[INST_NODE_INDEX(in)] : (_InstInfo*)&InstInfosEx[INST_NODE_INDEX(in)];
+			return instType == INT_INFO ? &InstInfos[INST_NODE_INDEX(in)] : (const __constant _InstInfo*)&InstInfosEx[INST_NODE_INDEX(in)];
 
 		/* It has to be a prefixed table then. */
 		ii = inst_lookup_prefixed(in, ps);
@@ -528,7 +528,7 @@ const __constant _InstInfo* inst_lookup(_CodeInfo* ci, _PrefixState* ps)
 		instType = INST_NODE_TYPE(in2);
 		
 		if (instType == INT_INFO) ii = &InstInfos[INST_NODE_INDEX(in2)];
-		else if (instType == INT_INFOEX) ii = (_InstInfo*)&InstInfosEx[INST_NODE_INDEX(in2)];
+		else if (instType == INT_INFOEX) ii = (const __constant _InstInfo*)&InstInfosEx[INST_NODE_INDEX(in2)];
 
 		/*
 		 * OCST_2dBYTES is complex, because there are a few instructions which are not divided in some special cases.
@@ -553,7 +553,7 @@ const __constant _InstInfo* inst_lookup(_CodeInfo* ci, _PrefixState* ps)
 		instType = INST_NODE_TYPE(in);
 
 		if (instType < INT_INFOS)
-			return instType == INT_INFO ? &InstInfos[INST_NODE_INDEX(in)] : (_InstInfo*)&InstInfosEx[INST_NODE_INDEX(in)];
+			return instType == INT_INFO ? &InstInfos[INST_NODE_INDEX(in)] : (const __constant _InstInfo*)&InstInfosEx[INST_NODE_INDEX(in)];
 
 		if (instType == INT_LIST_PREFIXED) return inst_lookup_prefixed(in, ps);
 	}
