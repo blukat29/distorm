@@ -401,7 +401,7 @@ _Undecodable: /* If the instruction couldn't be decoded for some reason, drop th
  *                  This is in order to save memory allocation for conversion between the new and the old structures.
  *                  It really means we can do the conversion in-place now.
  */
-_DecodeResult decode_internal(_CodeInfo* _ci, int supportOldIntr, _DInst result[], unsigned int maxResultCount, unsigned int* usedInstructionsCount)
+_DecodeResult decode_internal(_CodeInfo* _ci, int __attribute__((unused)) supportOldIntr, _DInst result[], unsigned int maxResultCount, unsigned int* usedInstructionsCount)
 {
 	_PrefixState ps;
 	unsigned int prefixSize;
@@ -431,8 +431,6 @@ _DecodeResult decode_internal(_CodeInfo* _ci, int supportOldIntr, _DInst result[
 	_DecodeResult decodeResult;
 
 #ifdef DISTORM_LIGHT
-	supportOldIntr; /* Unreferenced. */
-
 	/*
 	 * Only truncate address if we are using the decompose interface.
 	 * Otherwise, we use the textual interface which needs full addresses for formatting bytes output.
