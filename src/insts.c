@@ -7931,9 +7931,9 @@ const __constant _InstSharedInfo InstSharedInfoTable[470] = {
 	{ 100, 67, 64, 96, 0, 0, 0 }
 };
 
-const uint16_t CmpMnemonicOffsets[8] = {
+const __constant uint16_t CmpMnemonicOffsets[8] = {
 	0, 9, 18, 27, 39, 49, 59, 69
 };
-const uint16_t VCmpMnemonicOffsets[32] = {
+const __constant uint16_t VCmpMnemonicOffsets[32] = {
 	0, 10, 20, 30, 43, 54, 65, 76, 87, 100, 111, 122, 135, 149, 159, 169, 181, 194, 207, 220, 235, 249, 263, 277, 290, 303, 317, 331, 347, 361, 374, 387
 };
